@@ -1,0 +1,30 @@
+# Visual Studio
+*.suo
+*.user
+.vs/
+bin/
+obj/
+*.cache
+*.pdb
+*.sdf
+*.ipch
+
+# NuGet
+packages/
+!packages.config
+
+# Логи
+*.log
+
+# Файлы публикации
+*.pubxml
+*.pubxml.user
+
+# Временные файлы
+*.tmp
+*.bak
+
+# Диагностика и кэш
+[TestResults]/
+*.trx
+*.xml
