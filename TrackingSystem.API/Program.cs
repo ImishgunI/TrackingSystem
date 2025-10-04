@@ -8,7 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext(TrackingSystem.infrastructure.Data.Context)(options =>
+builder.Services.AddDbContext<TrackingSystem.infrastructure.Data.Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DataBase")));
 
 var app = builder.Build();
