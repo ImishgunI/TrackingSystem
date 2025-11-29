@@ -1,29 +1,33 @@
 using Microsoft.EntityFrameworkCore;
+using TrackingSystem.Infrastructure.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<TrackingSystem.infrastructure.Data.Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DataBase")));
+
+builder.Services.AddDbContext<Context>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DataBase")));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+
+app.UseSwagger(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+});
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<Context>();
+    context.Database.EnsureCreated();
+}
 
 app.Run();
