@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TrackingSystem.Domain.DTOs;
 using TrackingSystem.Domain.Entities;
 using TrackingSystem.Infrastructure.Data;
 
@@ -10,40 +12,60 @@ namespace TrackingSystem.API.Controllers;
 public class StudentsController : ControllerBase
 {
     private readonly Context _context;
+    private readonly IMapper _mapper;
 
-    public StudentsController(Context context)
+    public StudentsController(Context context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
+    public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
     {
-        return await _context.Students.ToListAsync();
+        var students = await _context.Students
+            .Include(s => s.Group)
+            .OrderBy(s => s.Id)
+            .ToListAsync();
+
+        return _mapper.Map<List<StudentDto>>(students);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Student>> GetStudent(int id)
+    public async Task<ActionResult<StudentDto>> GetStudent(int id)
     {
-        var student = await _context.Students.FindAsync(id);
+        var student = await _context.Students
+            .Include(s => s.Group)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
         if (student == null) return NotFound();
-        return student;
+
+        return _mapper.Map<StudentDto>(student);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Student>> CreateStudent(Student student)
+    public async Task<ActionResult<StudentDto>> CreateStudent(CreateStudentDto createDto)
     {
+        var student = _mapper.Map<Student>(createDto);
+
         _context.Students.Add(student);
         await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetStudent), new { id = student.Id }, student);
+
+        // Перезагружаем с включением Group для маппинга
+        await _context.Entry(student).Reference(s => s.Group).LoadAsync();
+
+        return CreatedAtAction(nameof(GetStudent),
+            new { id = student.Id },
+            _mapper.Map<StudentDto>(student));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateStudent(int id, Student student)
+    public async Task<IActionResult> UpdateStudent(int id, UpdateStudentDto updateDto)
     {
-        if (id != student.Id) return BadRequest();
+        var student = await _context.Students.FindAsync(id);
+        if (student == null) return NotFound();
 
-        _context.Entry(student).State = EntityState.Modified;
+        _mapper.Map(updateDto, student);
         await _context.SaveChangesAsync();
 
         return NoContent();

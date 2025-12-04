@@ -23,18 +23,18 @@ namespace TrackingSystem.Infrastructure.Data
 
             modelBuilder.Entity<Student>(entity =>
             {
-                entity.ToTable("students");
-                entity.Property(s => s.Id).HasColumnName("id");
+                entity.ToTable("Students");
+                entity.Property(s => s.Id);
 
                 entity.HasKey(s => s.Id);
                 entity.HasIndex(s => s.StudentIdNumber).IsUnique();
-                entity.Property(s => s.FirstName).IsRequired().HasMaxLength(100).HasColumnName("firstname");
-                entity.Property(s => s.LastName).IsRequired().HasMaxLength(100).HasColumnName("lastname");
-                entity.Property(s => s.MiddleName).HasMaxLength(100).HasColumnName("middlename");
-                entity.Property(s => s.StudentIdNumber).IsRequired().HasMaxLength(20).HasColumnName("studentidnumber");
-                entity.Property(s => s.Email).HasMaxLength(255).HasColumnName("email");
-                entity.Property(s => s.PhoneNumber).HasMaxLength(20).HasColumnName("phonenumber");
-                entity.Property(s => s.GroupId).HasColumnName("groupid");
+                entity.Property(s => s.FirstName).IsRequired().HasMaxLength(100);
+                entity.Property(s => s.LastName).IsRequired().HasMaxLength(100);
+                entity.Property(s => s.MiddleName).HasMaxLength(100);
+                entity.Property(s => s.StudentIdNumber).IsRequired().HasMaxLength(20);
+                entity.Property(s => s.Email).HasMaxLength(255);
+                entity.Property(s => s.PhoneNumber).HasMaxLength(20);
+                entity.Property(s => s.GroupId);
 
                 entity.HasOne(s => s.Group)
                       .WithMany(g => g.Students)
@@ -44,34 +44,34 @@ namespace TrackingSystem.Infrastructure.Data
 
             modelBuilder.Entity<Group>(entity =>
             {
-                entity.ToTable("groups");
-                entity.Property(g => g.Id).HasColumnName("id");
+                entity.ToTable("Groups");
+                entity.Property(g => g.Id);
                 entity.HasKey(g => g.Id);
                 entity.HasIndex(g => g.Name).IsUnique();
-                entity.Property(g => g.Name).IsRequired().HasMaxLength(50).HasColumnName("name");
-                entity.Property(g => g.Specialization).HasMaxLength(100).HasColumnName("specialization");
+                entity.Property(g => g.Name).IsRequired().HasMaxLength(50);
+                entity.Property(g => g.Specialization).HasMaxLength(100);
             });
 
             modelBuilder.Entity<Teacher>(entity =>
             {
-                entity.ToTable("teachers");
+                entity.ToTable("Teachers");
                 entity.HasKey(t => t.Id);
-                entity.Property(t => t.Id).HasColumnName("id");
-                entity.Property(t => t.FirstName).IsRequired().HasMaxLength(100).HasColumnName("firstname");
-                entity.Property(t => t.LastName).IsRequired().HasMaxLength(100).HasColumnName("lastname");
-                entity.Property(t => t.MiddleName).HasMaxLength(100).HasColumnName("middlename");
-                entity.Property(t => t.Position).IsRequired().HasMaxLength(50).HasColumnName("position");
-                entity.Property(t => t.Email).HasMaxLength(255).HasColumnName("email");
+                entity.Property(t => t.Id);
+                entity.Property(t => t.FirstName).IsRequired().HasMaxLength(100);
+                entity.Property(t => t.LastName).IsRequired().HasMaxLength(100);
+                entity.Property(t => t.MiddleName).HasMaxLength(100);
+                entity.Property(t => t.Position).IsRequired().HasMaxLength(50);
+                entity.Property(t => t.Email).HasMaxLength(255);
             });
 
             modelBuilder.Entity<Subject>(entity =>
             {
-                entity.ToTable("subjects");
+                entity.ToTable("Subjects");
                 entity.HasKey(s => s.Id);
-                entity.Property(s => s.Id).HasColumnName("id");
-                entity.Property(s => s.Name).IsRequired().HasMaxLength(100).HasColumnName("name");
-                entity.Property(s => s.Code).HasMaxLength(10).HasColumnName("code");
-                entity.Property(s => s.Description).HasMaxLength(500).HasColumnName("description");
+                entity.Property(s => s.Id);
+                entity.Property(s => s.Name).IsRequired().HasMaxLength(100);
+                entity.Property(s => s.Code).HasMaxLength(10);
+                entity.Property(s => s.Description).HasMaxLength(500);
 
                 entity.HasOne(s => s.Teacher)
                       .WithMany(t => t.Subjects)
@@ -81,10 +81,10 @@ namespace TrackingSystem.Infrastructure.Data
 
             modelBuilder.Entity<Lesson>(entity =>
             {
-                entity.ToTable("lessons");
-                entity.Property(l => l.Id).HasColumnName("id");
+                entity.ToTable("Lessons");
+                entity.Property(l => l.Id);
                 entity.HasKey(l => l.Id);
-                entity.Property(l => l.Topic).IsRequired().HasMaxLength(200).HasColumnName("topic");
+                entity.Property(l => l.Topic).IsRequired().HasMaxLength(200);
 
                 entity.HasOne(l => l.Subject)
                       .WithMany(s => s.Lessons)
@@ -99,13 +99,13 @@ namespace TrackingSystem.Infrastructure.Data
 
             modelBuilder.Entity<Attendance>(entity =>
             {
-                entity.ToTable("attendance");
+                entity.ToTable("Attendance");
                 entity.HasKey(a => a.Id);
-                entity.Property(a => a.Id).HasColumnName("id");
+                entity.Property(a => a.Id);
                 entity.HasIndex(a => new { a.StudentId, a.LessonId }).IsUnique();
 
-                entity.Property(a => a.Notes).HasMaxLength(500).HasColumnName("notes");
-                entity.Property(a => a.CreatedAt).HasDefaultValueSql("GETUTCDATE()").HasColumnName("createdat");
+                entity.Property(a => a.Notes).HasMaxLength(500);
+                entity.Property(a => a.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
                 entity.HasOne(a => a.Student)
                       .WithMany(s => s.Attendances)
